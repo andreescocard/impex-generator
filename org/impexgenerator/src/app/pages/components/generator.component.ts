@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-generator',
+  imports: [CommonModule],
   templateUrl: './generator.component.html',
   styleUrls: ['./generator.component.css'],
   standalone: true,
@@ -10,7 +11,7 @@ import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 export class GeneratorComponent implements OnInit {
     
  
-  options = ['Option 1', 'Option 2', 'Option 3'];
+  options = ['Paragraph', 'Feature Flag', 'Page', 'Product Images'];
   darkMode = true;
 
   ngOnInit(): void {

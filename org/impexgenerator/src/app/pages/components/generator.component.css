@@ -1,0 +1,18 @@
+/* Custom styles for <option> elements */
+option {
+    color: black; /* Default text color */
+    background-color: white; /* Default background color */
+  }
+  
+  /* Dark mode styles for <option> elements */
+  .dark option {
+    color: white; /* Dark mode text color */
+    background-color: #374151; /* Dark mode background color (dark gray) */
+  }
+  
+
+  
+  /* Dark mode styles for the select element */
+  .dark select {
+    border-color: white; /* Dark mode border color */
+  }

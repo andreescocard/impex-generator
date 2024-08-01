@@ -15,15 +15,15 @@
     </nav>
   
     <div class="flex flex-col items-center justify-center py-12">
-      <div class="w-full max-w-md">
+      <div class="w-full max-w-screen-xl">
         <div class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div class="mb-4">
             <label for="options" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
               Options
             </label>
-            <select id="options" class="block appearance-none w-full bg-white dark:bg-gray-700 border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
-              <option *ngFor="let option of options" [value]="option">{{ option }}</option>
-            </select>
+            <select id="options" class="block appearance-none w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline transition-colors duration-500">
+                <option *ngFor="let option of options" [value]="option">{{ option }}</option>
+              </select>
           </div>
           <div class="mb-4">
             <button (click)="submit()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
