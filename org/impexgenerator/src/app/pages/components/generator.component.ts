@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-generator',
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule],
   templateUrl: './generator.component.html',
   styleUrls: ['./generator.component.css'],
   standalone: true,
@@ -11,7 +12,8 @@ import { CommonModule } from '@angular/common';
 export class GeneratorComponent implements OnInit {
     
  
-  options = ['Paragraph', 'Feature Flag', 'Page', 'Product Images'];
+  options = ['Choose one','Paragraph', 'Feature Flag', 'Page', 'Product Images'];
+  selectedOption: string = 'Choose one';
   darkMode = true;
 
   ngOnInit(): void {
@@ -29,7 +31,7 @@ export class GeneratorComponent implements OnInit {
 
   submit() {
     // Handle submit logic here
-    console.log('Submit button clicked');
+    console.log('Submit button clicked with option:', this.selectedOption);
   }
 
   private applyDarkMode(isDark: boolean) {

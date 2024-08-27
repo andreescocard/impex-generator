@@ -21,10 +21,37 @@
             <label for="options" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
               Choose one option
             </label>
-            <select id="options" class="block appearance-none w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline transition-colors duration-500">
-                <option *ngFor="let option of options" [value]="option">{{ option }}</option>
-              </select>
+            <select id="options" [(ngModel)]="selectedOption" class="block appearance-none w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline transition-colors duration-500">
+              <option *ngFor="let option of options" [value]="option">{{ option }}</option>
+            </select>
           </div>
+
+          <div *ngIf="selectedOption && selectedOption !== 'Choose one'" class="mb-4">
+            <div *ngIf="selectedOption === 'Paragraph'">
+              <!-- Formulário para Paragraph -->
+              <label for="paragraph" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Paragraph:</label>
+              <textarea id="paragraph" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            </div>
+          
+            <div *ngIf="selectedOption === 'Feature Flag'">
+              <!-- Formulário para Feature Flag -->
+              <label for="featureFlag" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Feature Flag Name:</label>
+              <input id="featureFlag" type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"/>
+            </div>
+          
+            <div *ngIf="selectedOption === 'Page'">
+              <!-- Formulário para Page -->
+              <label for="pageTitle" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Page Title:</label>
+              <input id="pageTitle" type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"/>
+            </div>
+          
+            <div *ngIf="selectedOption === 'Product Images'">
+              <!-- Formulário para Product Images -->
+              <label for="productImages" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Upload Product Images:</label>
+              <input id="productImages" type="file" multiple class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"/>
+            </div>
+          </div>
+
           <div class="mb-4">
             <button (click)="submit()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
               Generate
@@ -40,7 +67,7 @@
       </div>
     </div>
     <div class="flex flex-col items-center justify-center py-12 dark:text-white">
-        Created by andreescocard
+        Created by <a href="https://github.com/andreescocard">andreescocard</a>
     </div>
   </div>
   
