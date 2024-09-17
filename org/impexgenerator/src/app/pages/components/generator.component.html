@@ -35,8 +35,15 @@
           
             <div *ngIf="selectedOption === 'Feature Flag'">
               <!-- Formulário para Feature Flag -->
-              <label for="featureFlag" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Feature Flag Name:</label>
-              <input id="featureFlag" type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"/>
+              <label for="featureFlagUid" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Feature Flag uid (newFeatureFlag):</label>
+              <input id="featureFlagUid" type="text" class="common-input" />
+               <label for="featureFlagEnabled" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Enabled?</label>
+               <select id="options" class="common-input">
+                <option  value="true">True</option>
+                <option  value="false">False</option>
+              </select>
+              <label for="featureFlagDesc" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Description:</label>
+              <input id="featureFlagDesc" type="text" class="common-input" />
             </div>
           
             <div *ngIf="selectedOption === 'Page'">
@@ -61,7 +68,7 @@
             <label for="textarea" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
               Output
             </label>
-            <textarea id="textarea" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            <textarea id="textarea" rows="4" class="common-input"></textarea>
           </div>
         </div>
       </div>
