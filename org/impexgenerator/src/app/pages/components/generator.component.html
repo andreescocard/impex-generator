@@ -34,17 +34,42 @@
             </div>
           
             <div *ngIf="selectedOption === 'Feature Flag'">
-              <!-- Formulário para Feature Flag -->
-              <label for="featureFlagUid" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Feature Flag uid (newFeatureFlag):</label>
-              <input id="featureFlagUid" type="text" class="common-input" />
-               <label for="featureFlagEnabled" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Enabled?</label>
-               <select id="options" class="common-input">
-                <option  value="true">True</option>
-                <option  value="false">False</option>
-              </select>
-              <label for="featureFlagDesc" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Description:</label>
-              <input id="featureFlagDesc" type="text" class="common-input" />
+              <form [formGroup]="form" (ngSubmit)="submit()">
+                <label for="featureFlagUid" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
+                  Enter Feature Flag uid (newFeatureFlag):
+                </label>
+                <input id="featureFlagUid" type="text" class="common-input" formControlName="featureFlagUid" />
+                <div *ngIf="form.get('featureFlagUid').touched && form.get('featureFlagUid').invalid" class="text-red-500 text-xs italic">
+                  Feature Flag uid is required.
+                </div>
+            
+                <label for="featureFlagEnabled" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Enabled?</label>
+                <select id="options" class="common-input" formControlName="featureFlagEnabled">
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                </select>
+                <div *ngIf="form.get('featureFlagEnabled').touched && form.get('featureFlagEnabled').invalid" class="text-red-500 text-xs italic">
+                  Enabled option is required.
+                </div>
+            
+                <label for="featureFlagName" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Name:</label>
+                <input id="featureFlagName" type="text" class="common-input" formControlName="featureFlagName" />
+                <div *ngIf="form.get('featureFlagName').touched && form.get('featureFlagName').invalid" class="text-red-500 text-xs italic">
+                  Name is required.
+                </div>
+            
+                <label for="featureFlagDesc" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Description:</label>
+                <input id="featureFlagDesc" type="text" class="common-input mb-4" formControlName="featureFlagDesc" />
+                <div *ngIf="form.get('featureFlagDesc').touched && form.get('featureFlagDesc').invalid" class="text-red-500 text-xs italic">
+                  Description is required.
+                </div>
+            
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ">
+                  Generate
+                </button>
+              </form>
             </div>
+            
           
             <div *ngIf="selectedOption === 'Page'">
               <!-- Formulário para Page -->
@@ -59,16 +84,17 @@
             </div>
           </div>
 
-          <div class="mb-4">
-            <button (click)="submit()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-              Generate
-            </button>
-          </div>
+      
           <div class="mb-4">
             <label for="textarea" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
               Output
             </label>
-            <textarea id="textarea" rows="4" class="common-input"></textarea>
+            <textarea id="textarea" rows="4" class="common-input" [value]="output" readonly></textarea>
+          </div>
+          <div class="mb-4">
+            <button (click)="copyToClipboard()" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              {{ copyButtonText }}
+            </button>
           </div>
         </div>
       </div>
