@@ -35,40 +35,33 @@
           
             <div *ngIf="selectedOption === 'Feature Flag'">
               <form [formGroup]="form" (ngSubmit)="submit()">
-                <label for="featureFlagUid" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
-                  Enter Feature Flag uid (newFeatureFlag):
+                
+                <!-- Feature Flag key -->
+                <label for="featureFlagKey" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
+                  Enter Feature Flag key (newFeatureFlag):
                 </label>
-                <input id="featureFlagUid" type="text" class="common-input" formControlName="featureFlagUid" />
-                <div *ngIf="form.get('featureFlagUid')?.touched && form.get('featureFlagUid')?.invalid" class="text-red-500 text-xs italic">
-                  Feature Flag uid is required.
+                <input id="featureFlagKey" type="text" class="common-input" formControlName="featureFlagKey" />
+                <div *ngIf="form.get('featureFlagKey')?.touched && form.get('featureFlagKey')?.invalid" class="text-red-500 text-xs italic">
+                  Feature Flag key is required.
                 </div>
             
-                <label for="featureFlagEnabled" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Enabled?</label>
-                <select id="options" class="common-input" formControlName="featureFlagEnabled">
+                <!-- Feature Flag status -->
+                <label for="featureFlagStatus" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Status?</label>
+                <select id="featureFlagStatus" class="common-input mb-4" formControlName="featureFlagStatus">
                   <option value="true">True</option>
                   <option value="false">False</option>
                 </select>
-                <div *ngIf="form.get('featureFlagEnabled')?.touched && form.get('featureFlagEnabled')?.invalid" class="text-red-500 text-xs italic">
-                  Enabled option is required.
+                <div *ngIf="form.get('featureFlagStatus')?.touched && form.get('featureFlagStatus')?.invalid" class="text-red-500 text-xs italic">
+                  Status option is required.
                 </div>
             
-                <label for="featureFlagName" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Name:</label>
-                <input id="featureFlagName" type="text" class="common-input" formControlName="featureFlagName" />
-                <div *ngIf="form.get('featureFlagName')?.touched && form.get('featureFlagName')?.invalid" class="text-red-500 text-xs italic">
-                  Name is required.
-                </div>
-            
-                <label for="featureFlagDesc" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Description:</label>
-                <input id="featureFlagDesc" type="text" class="common-input mb-4" formControlName="featureFlagDesc" />
-                <div *ngIf="form.get('featureFlagDesc')?.touched && form.get('featureFlagDesc')?.invalid" class="text-red-500 text-xs italic">
-                  Description is required.
-                </div>
-            
-                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ">
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
                   Generate
                 </button>
               </form>
             </div>
+            
             
           
             <div *ngIf="selectedOption === 'Page'">

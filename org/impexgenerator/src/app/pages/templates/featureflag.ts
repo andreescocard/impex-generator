@@ -1,13 +1,9 @@
 export interface FeatureFlag {
-    uid: string;
-    enabled: boolean;
-    name: string;
-    description: string;
-  }
-  
+  key: string;
+  status?: boolean; 
+}
 
-  export function createFeatureFlagImpex(flag: FeatureFlag): string {
-    return `INSERT_UPDATE FeatureFlag; uid[unique=true]; enabled; name[lang=en]; description[lang=en]
-                         ; ${flag.uid}       ; ${flag.enabled}   ; ${flag.name}  ; ${flag.description}`;
-  }
-  
+export function createFeatureFlagImpex(flag: FeatureFlag): string {
+  return `INSERT_UPDATE FeatureFlag; key[unique = true]; status[default = true]
+           ; ${flag.key} ; ${flag.status !== undefined ? (flag.status ? 'true' : 'false') : ''}`;
+}

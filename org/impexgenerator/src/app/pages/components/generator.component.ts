@@ -25,10 +25,8 @@ export class GeneratorComponent implements OnInit {
   ) {
   
     this.form = this.fb.group({
-      featureFlagUid: ['', Validators.required],
-      featureFlagEnabled: ['true', Validators.required],
-      featureFlagName: ['', Validators.required],
-      featureFlagDesc: ['', Validators.required],
+      featureFlagKey: ['', Validators.required],
+      featureFlagStatus: ['true', Validators.required],
     });
   }
 
@@ -52,11 +50,10 @@ export class GeneratorComponent implements OnInit {
   submit() {
     if (this.form.valid) {
       const flag: FeatureFlag = {
-        uid: this.form.value.featureFlagUid,
-        enabled: this.form.value.featureFlagEnabled === 'true',
-        name: this.form.value.featureFlagName,
-        description: this.form.value.featureFlagDesc
+        key: this.form.value.featureFlagKey,
+        status: this.form.value.featureFlagStatus === 'true'
       };
+      
 
       // Generate IMPEX content using the imported function
       this.output = createFeatureFlagImpex(flag);
