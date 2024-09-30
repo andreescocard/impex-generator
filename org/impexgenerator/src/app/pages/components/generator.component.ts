@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { createFeatureFlagImpex, FeatureFlag } from '../templates/featureflag'; 
 @Component({
@@ -16,6 +16,8 @@ export class GeneratorComponent implements OnInit {
   darkMode = true;
 
   form: FormGroup; 
+  formParagraph: FormGroup; 
+  paragraphs: FormArray;
   output: string = '';
   copyButtonText: string = 'Copy to Clipboard';
 
@@ -28,6 +30,28 @@ export class GeneratorComponent implements OnInit {
       featureFlagKey: ['', Validators.required],
       featureFlagStatus: ['true', Validators.required],
     });
+
+
+    this.formParagraph = this.fb.group({
+      env: ['Staged', Validators.required],
+      contentCatalog: ['', Validators.required],
+      lang: ['pt', Validators.required],  
+      paragraphs: this.fb.array([this.createParagraph()])
+    });
+
+    this.paragraphs = this.formParagraph.get('paragraphs') as FormArray;
+  }
+
+  createParagraph(): FormGroup {
+    return this.fb.group({
+      uid: ['', Validators.required],
+      name: ['', Validators.required],
+      content: ['', Validators.required]
+    });
+  }
+
+  addParagraph() {
+    this.paragraphs.push(this.createParagraph());
   }
 
   ngOnInit(): void {
@@ -53,12 +77,18 @@ export class GeneratorComponent implements OnInit {
         key: this.form.value.featureFlagKey,
         status: this.form.value.featureFlagStatus === 'true'
       };
-      
-
-      // Generate IMPEX content using the imported function
       this.output = createFeatureFlagImpex(flag);
     } else {
-      // If the form is invalid, mark all fields as touched to show validation errors
+      this.form.markAllAsTouched();
+    }
+
+    if (this.formParagraph.valid) {
+      const flag: FeatureFlag = {
+        key: this.form.value.featureFlagKey,
+        status: this.form.value.featureFlagStatus === 'true'
+      };
+      this.output = createFeatureFlagImpex(flag);
+    } else {
       this.form.markAllAsTouched();
     }
   }
@@ -88,4 +118,33 @@ export class GeneratorComponent implements OnInit {
       console.error('Clipboard API not supported');
     }
   }
+
+  onOptionChange() {
+    this.output = '';
+    if (this.selectedOption === 'Feature Flag') {
+      this.form.reset({
+        featureFlagKey: '',
+        featureFlagStatus: 'true'
+      });
+    } else if (this.selectedOption === 'Paragraph') {
+     this.resetParagraphForm();
+    }
+  }
+
+  resetParagraphForm() {
+    const paragraphArray = this.formParagraph.get('paragraphs') as FormArray;
+    while (paragraphArray.length) {
+      paragraphArray.removeAt(0); 
+    }
+
+    paragraphArray.push(this.createParagraph());
+
+    this.formParagraph.reset({
+      env: 'Staged',
+      contentCatalog: '',
+      lang: 'pt',
+      paragraphs: paragraphArray
+    });
+  }
+
 }

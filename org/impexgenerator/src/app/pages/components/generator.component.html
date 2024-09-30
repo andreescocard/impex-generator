@@ -21,17 +21,92 @@
             <label for="options" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
               Choose one option
             </label>
-            <select id="options" [(ngModel)]="selectedOption" class="block appearance-none w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline transition-colors duration-500">
+            <select id="options" [(ngModel)]="selectedOption" (ngModelChange)="onOptionChange()" class="block appearance-none w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline transition-colors duration-500">
               <option *ngFor="let option of options" [value]="option">{{ option }}</option>
             </select>
           </div>
 
           <div *ngIf="selectedOption && selectedOption !== 'Choose one'" class="mb-4">
             <div *ngIf="selectedOption === 'Paragraph'">
-              <!-- Formulário para Paragraph -->
-              <label for="paragraph" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Paragraph:</label>
-              <textarea id="paragraph" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+              <form [formGroup]="formParagraph" (ngSubmit)="submit()">
+            
+                <!-- Env -->
+                <label for="env" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
+                  Select Env:
+                </label>
+                <select id="env" class="common-input" formControlName="env">
+                  <option value="Staged">Staged</option>
+                  <option value="Online">Online</option>
+                </select>
+                <div *ngIf="form.get('env')?.touched && form.get('env')?.invalid" class="text-red-500 text-xs italic">
+                  Env is required.
+                </div>
+            
+                <!-- Content Catalog -->
+                <label for="contentCatalog" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">
+                  Enter Content Catalog:
+                </label>
+                <input id="contentCatalog" type="text" class="common-input" formControlName="contentCatalog" />
+                <div *ngIf="form.get('contentCatalog')?.touched && form.get('contentCatalog')?.invalid" class="text-red-500 text-xs italic">
+                  Content Catalog is required.
+                </div>
+            
+                <!-- Lang -->
+                <label for="lang" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">
+                  Enter Language:
+                </label>
+                <input id="lang" type="text" class="common-input" formControlName="lang" value="pt" />
+                <div *ngIf="form.get('lang')?.touched && form.get('lang')?.invalid" class="text-red-500 text-xs italic">
+                  Language is required.
+                </div>
+                
+                <hr class="my-4 border-gray-300 dark:border-gray-600" />
+
+                <button type="button" (click)="addParagraph()" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-2">
+                  Add New Paragraph
+                </button>
+
+                <!-- Paragraph Section -->
+                <div formArrayName="paragraphs">
+                  <div *ngFor="let paragraph of paragraphs.controls; let i = index" [formGroupName]="i" class="mb-4 relative">
+                    
+            
+
+                    <!-- Paragraph UID -->
+                    <label for="uid-{{i}}" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
+                      Paragraph UID {{i + 1}}:
+                    </label>
+                    <input id="uid-{{i}}" type="text" class="common-input" formControlName="uid" />
+                    <div *ngIf="paragraph.get('uid')?.touched && paragraph.get('uid')?.invalid" class="text-red-500 text-xs italic">
+                      UID is required.
+                    </div>
+
+                    <label for="name-{{i}}" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Paragraph Name {{i + 1}}:</label>
+                    <input id="name-{{i}}" type="text" class="common-input" formControlName="name" />
+                    <div *ngIf="paragraph.get('name')?.touched && paragraph.get('name')?.invalid" class="text-red-500 text-xs italic">Name is required.</div>
+            
+                    <!-- Paragraph Content -->
+                    <label for="content-{{i}}" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">
+                      Paragraph Content {{i + 1}}:
+                    </label>
+                    <textarea id="content-{{i}}" rows="4" class="common-input" formControlName="content"></textarea>
+                    <div *ngIf="paragraph.get('content')?.touched && paragraph.get('content')?.invalid" class="text-red-500 text-xs italic">
+                      Content is required.
+                    </div>
+            
+                   
+                  </div>
+                </div>
+            
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
+                  Generate
+                </button>
+            
+              </form>
             </div>
+            
+            
           
             <div *ngIf="selectedOption === 'Feature Flag'">
               <form [formGroup]="form" (ngSubmit)="submit()">
