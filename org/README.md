@@ -4,6 +4,11 @@
 
 Currently using spartan, read more about on https://www.spartan.ng/ :)
 
-## to generate the build:
+# Generate the build:
+nx build impexgenerator --prod --base-href=/impex-generator/
 
-`nx build impexgenerator --base-href=/impexgenerator/ --deploy-url=/impexgenerator/` - with subfolder, remember to edit the base tag and the html with correct url
+# Change the prefix on dist/client folder in index.html:
+# Add /impex-generator/
+
+# Deploy on GitHub Pages:
+npx angular-cli-ghpages --dir=dist/impexgenerator/client

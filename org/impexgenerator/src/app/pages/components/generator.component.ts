@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { createFeatureFlagImpex, FeatureFlag } from '../templates/featureflag'; 
+import { CMSParagraphComponent, createParagraphImpex } from '../templates/paragraph';
 @Component({
   selector: 'app-generator',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -72,26 +73,42 @@ export class GeneratorComponent implements OnInit {
   }
 
   submit() {
-    if (this.form.valid) {
+    if (this.selectedOption === 'Feature Flag' && this.form.valid) {
       const flag: FeatureFlag = {
         key: this.form.value.featureFlagKey,
         status: this.form.value.featureFlagStatus === 'true'
       };
       this.output = createFeatureFlagImpex(flag);
-    } else {
+    } else if (this.selectedOption === 'Feature Flag') {
       this.form.markAllAsTouched();
     }
-
-    if (this.formParagraph.valid) {
-      const flag: FeatureFlag = {
-        key: this.form.value.featureFlagKey,
-        status: this.form.value.featureFlagStatus === 'true'
+  
+    if (this.selectedOption === 'Paragraph' && this.formParagraph.valid) {
+      const paragraphs = this.formParagraph.value.paragraphs.map((paragraph: { uid: any; name: any; componentRef: any; content: any; }) => {
+        return {
+          uid: paragraph.uid,
+          name: paragraph.name,
+          componentRef: paragraph.componentRef,
+          content: paragraph.content
+        };
+      });
+  
+ 
+      const cmsComponent: CMSParagraphComponent = {
+        env: this.formParagraph.value.env,
+        contentCatalog: this.formParagraph.value.contentCatalog,
+        lang: this.formParagraph.value.lang,
+        paragraphs: paragraphs
       };
-      this.output = createFeatureFlagImpex(flag);
-    } else {
-      this.form.markAllAsTouched();
+  
+
+      this.output = createParagraphImpex(cmsComponent);
+    } else if (this.selectedOption === 'Paragraph') {
+      this.formParagraph.markAllAsTouched();
     }
   }
+  
+  
 
   private applyDarkMode(isDark: boolean) {
     if (isPlatformBrowser(this.platformId)) {

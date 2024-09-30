@@ -9,7 +9,7 @@ The **IMPEX Generator** is a tool designed to generate sample IMPEX files for us
 ## Roadmap
 
 - [x] Feature Flag
-- [ ] Paragraph
+- [x] Paragraph
 - [ ] Page
 - [ ] Product Images
 
