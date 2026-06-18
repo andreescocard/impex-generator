@@ -1,36 +1,36 @@
 /// <reference types="vitest" />
 
 import analog from '@analogjs/platform';
-import { defineConfig, Plugin, splitVendorChunkPlugin } from 'vite';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import { defineConfig } from 'vite';
+
+const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    root: __dirname,
+    root: projectRoot,
     cacheDir: `../node_modules/.vite`,
-    
     build: {
-      outDir: '../dist/./impexgenerator/client',
-      reportCompressedSize: true,    
+      outDir: '../dist/impexgenerator/client',
+      reportCompressedSize: true,
       target: ['es2020'],
+    },
+    resolve: {
+      tsconfigPaths: true,
     },
     server: {
       fs: {
         allow: ['.'],
       },
-    },    
-    plugins: [
-      
-      analog(),
-      
-      nxViteTsPaths(),
-      splitVendorChunkPlugin(),
-    ],
+    },
+    plugins: [analog()],
     test: {
       globals: true,
+      pool: 'threads',
       environment: 'jsdom',
-      setupFiles: ['src/test-setup.ts'],
+      setupFiles: [resolve(projectRoot, 'src/test-setup.ts')],
       include: ['**/*.spec.ts'],
       reporters: ['default'],
     },

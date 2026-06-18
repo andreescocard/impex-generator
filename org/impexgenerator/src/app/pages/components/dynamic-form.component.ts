@@ -10,79 +10,96 @@ import { languageOptions } from '../../impex/types/shared';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
-      <ng-container *ngFor="let field of fields">
-        <ng-container [ngSwitch]="field.kind">
-          <div *ngSwitchCase="'group'" class="border-t border-gray-200 pt-4 dark:border-gray-700">
-            <div class="mb-3 flex items-center justify-between gap-3">
-              <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ field.label }}</h3>
-              <button type="button" (click)="addGroupItem(field)" class="inline-flex items-center gap-2 rounded bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700">
-                <span aria-hidden="true">+</span>
-                {{ labels.add }}
-              </button>
-            </div>
-
-            <div [formArrayName]="field.id" class="space-y-4">
-              <div *ngFor="let group of groupArray(field.id).controls; let index = index" [formGroupName]="index" class="rounded border border-gray-200 p-4 dark:border-gray-700">
-                <div class="mb-3 flex items-center justify-between">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ field.label }} {{ index + 1 }}</span>
-                  <button type="button" (click)="removeGroupItem(field.id, index)" [disabled]="groupArray(field.id).length === 1" class="inline-flex items-center gap-2 rounded border border-red-200 bg-red-50 px-3 py-1 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900 dark:bg-red-950 dark:text-red-200 dark:hover:bg-red-900">
-                    <span aria-hidden="true">x</span>
-                    {{ labels.remove }}
-                  </button>
-                </div>
-                <ng-container *ngFor="let child of field.fields">
-                  <ng-container [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{ field: child, parent: group }"></ng-container>
-                </ng-container>
+      @for (field of fields; track field) {
+        @switch (field.kind) {
+          @case ('group') {
+            <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ field.label }}</h3>
+                <button type="button" (click)="addGroupItem(field)" class="inline-flex items-center gap-2 rounded bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                  <span aria-hidden="true">+</span>
+                  {{ labels.add }}
+                </button>
+              </div>
+              <div [formArrayName]="field.id" class="space-y-4">
+                @for (group of groupArray(field.id).controls; track group; let index = $index) {
+                  <div [formGroupName]="index" class="rounded border border-gray-200 p-4 dark:border-gray-700">
+                    <div class="mb-3 flex items-center justify-between">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ field.label }} {{ index + 1 }}</span>
+                      <button type="button" (click)="removeGroupItem(field.id, index)" [disabled]="groupArray(field.id).length === 1" class="inline-flex items-center gap-2 rounded border border-red-200 bg-red-50 px-3 py-1 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900 dark:bg-red-950 dark:text-red-200 dark:hover:bg-red-900">
+                        <span aria-hidden="true">x</span>
+                        {{ labels.remove }}
+                      </button>
+                    </div>
+                    @for (child of field.fields; track child) {
+                      <ng-container [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{ field: child, parent: group }"></ng-container>
+                    }
+                  </div>
+                }
               </div>
             </div>
-          </div>
-
-          <ng-container *ngSwitchDefault>
+          }
+          @default {
             <ng-container [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{ field: field, parent: form }"></ng-container>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-
+          }
+        }
+      }
+    
       <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded bg-blue-600 px-4 py-2 font-bold text-white transition-colors hover:bg-blue-700">
         <span aria-hidden="true">+</span>
         {{ labels.addToScript }}
       </button>
     </form>
-
+    
     <ng-template #fieldTemplate let-field="field" let-parent="parent">
       <div [formGroup]="parent" class="mb-4">
         <label [attr.for]="controlId(field.id, parent)" class="mb-2 block text-sm font-bold text-gray-700 dark:text-gray-400">{{ field.label }}</label>
-
-        <textarea *ngIf="field.kind === 'textarea'" [id]="controlId(field.id, parent)" rows="4" class="common-input" [formControlName]="field.id"></textarea>
-
-        <select *ngIf="field.kind === 'select'" [id]="controlId(field.id, parent)" class="common-input" [formControlName]="field.id">
-          <option *ngFor="let option of field.options" [value]="option.value">{{ option.label }}</option>
-        </select>
-
-        <select *ngIf="field.kind === 'lang'" [id]="controlId(field.id, parent)" class="common-input" [formControlName]="field.id">
-          <option *ngFor="let option of languageOptions" [value]="option.value">{{ option.label }}</option>
-        </select>
-
-        <label *ngIf="field.kind === 'boolean'" class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-          <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" [formControlName]="field.id" />
-          {{ labels.enabled }}
-        </label>
-
-        <input
-          *ngIf="field.kind === 'text' || field.kind === 'number'"
-          [id]="controlId(field.id, parent)"
-          [type]="field.kind === 'number' ? 'number' : 'text'"
-          class="common-input"
-          [placeholder]="field.placeholder || ''"
-          [formControlName]="field.id"
-        />
-
-        <div *ngIf="parent.get(field.id)?.touched && parent.get(field.id)?.invalid" class="mt-1 text-xs italic text-red-500">
-          {{ field.label }} {{ labels.required }}
-        </div>
+    
+        @if (field.kind === 'textarea') {
+          <textarea [id]="controlId(field.id, parent)" rows="4" class="common-input" [formControlName]="field.id"></textarea>
+        }
+    
+        @if (field.kind === 'select') {
+          <select [id]="controlId(field.id, parent)" class="common-input" [formControlName]="field.id">
+            @for (option of field.options; track option) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        }
+    
+        @if (field.kind === 'lang') {
+          <select [id]="controlId(field.id, parent)" class="common-input" [formControlName]="field.id">
+            @for (option of languageOptions; track option) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        }
+    
+        @if (field.kind === 'boolean') {
+          <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" [formControlName]="field.id" />
+            {{ labels.enabled }}
+          </label>
+        }
+    
+        @if (field.kind === 'text' || field.kind === 'number') {
+          <input
+            [id]="controlId(field.id, parent)"
+            [type]="field.kind === 'number' ? 'number' : 'text'"
+            class="common-input"
+            [placeholder]="field.placeholder || ''"
+            [formControlName]="field.id"
+            />
+        }
+    
+        @if (parent.get(field.id)?.touched && parent.get(field.id)?.invalid) {
+          <div class="mt-1 text-xs italic text-red-500">
+            {{ field.label }} {{ labels.required }}
+          </div>
+        }
       </div>
     </ng-template>
-  `,
+    `,
 })
 export class DynamicFormComponent implements OnChanges {
   @Input({ required: true }) fields: ImpexField[] = [];
