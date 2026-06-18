@@ -1,174 +1,115 @@
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-    <nav class="bg-white dark:bg-gray-800 shadow mb-8">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <span class="text-xl font-semibold text-gray-900 dark:text-white">Impex Generator</span>
+<div class="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
+  <nav class="bg-white shadow dark:bg-gray-800">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+      <span class="text-xl font-semibold">IMPEX Powerhouse</span>
+      <button (click)="toggleDarkMode()" class="rounded px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+        {{ darkMode ? 'Dark' : 'Light' }}
+      </button>
+    </div>
+  </nav>
+
+  <main class="mx-auto grid max-w-7xl gap-4 px-4 py-6 lg:grid-cols-[260px_minmax(0,1fr)_380px]">
+    <aside class="rounded bg-white p-4 shadow dark:bg-gray-800">
+      <label for="type-search" class="mb-2 block text-sm font-bold text-gray-700 dark:text-gray-400">Types</label>
+      <input id="type-search" type="text" class="common-input" [(ngModel)]="searchTerm" placeholder="Search IMPEX types" />
+
+      <div class="mt-4 space-y-5">
+        <section *ngFor="let category of categories">
+          <h2 class="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ category }}</h2>
+          <div class="space-y-2">
+            <button
+              *ngFor="let type of typesForCategory(category)"
+              type="button"
+              (click)="selectType(type)"
+              class="w-full rounded border px-3 py-2 text-left transition-colors"
+              [ngClass]="
+                selectedType.id === type.id
+                  ? 'border-blue-600 bg-blue-50 text-blue-900 dark:border-blue-400 dark:bg-blue-950 dark:text-blue-100'
+                  : 'border-gray-200 bg-white text-gray-800 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700'
+              "
+            >
+              <span class="block text-sm font-semibold">{{ type.label }}</span>
+              <span class="mt-1 block text-xs text-gray-500 dark:text-gray-400">{{ type.description }}</span>
+            </button>
           </div>
-          <div class="flex items-center">
-            <button (click)="toggleDarkMode()" class="text-gray-900 dark:text-white">
-                {{ darkMode ? '🌙' : '☀️' }}
+        </section>
+      </div>
+    </aside>
+
+    <section class="rounded bg-white p-5 shadow dark:bg-gray-800">
+      <div class="mb-5">
+        <p class="text-xs font-bold uppercase tracking-wide text-blue-600 dark:text-blue-300">{{ selectedType.category }}</p>
+        <h1 class="text-2xl font-semibold">{{ selectedType.label }}</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ selectedType.description }}</p>
+      </div>
+
+      <app-dynamic-form [fields]="selectedType.fields" [initialValues]="activeInitialValues" (submitted)="addToCanvas($event)" />
+
+      <div class="mt-6 border-t border-gray-200 pt-5 dark:border-gray-700">
+        <label for="snippet-name" class="mb-2 block text-sm font-bold text-gray-700 dark:text-gray-400">Snippet library</label>
+        <div class="flex gap-2">
+          <input id="snippet-name" type="text" class="common-input" [(ngModel)]="snippetName" placeholder="Snippet name" />
+          <button type="button" (click)="saveSnippet()" class="rounded bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:bg-black dark:bg-gray-100 dark:text-gray-900">
+            Save
+          </button>
+        </div>
+
+        <div class="mt-3 grid gap-2 md:grid-cols-2">
+          <div *ngFor="let snippet of snippets" class="flex items-center justify-between gap-2 rounded border border-gray-200 px-3 py-2 dark:border-gray-700">
+            <button type="button" (click)="loadSnippet(snippet)" class="min-w-0 text-left">
+              <span class="block truncate text-sm font-semibold">{{ snippet.name }}</span>
+              <span class="block text-xs text-gray-500 dark:text-gray-400">{{ snippet.typeId }}</span>
+            </button>
+            <button *ngIf="!snippet.id.startsWith('starter-')" type="button" (click)="removeSnippet(snippet)" class="rounded px-2 py-1 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950">
+              Remove
             </button>
           </div>
         </div>
       </div>
-    </nav>
-  
-    <div class="flex flex-col items-center justify-center py-12">
-      <div class="w-full max-w-screen-xl">
-        <div class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div class="mb-4">
-            <label for="options" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
-              Choose one option
-            </label>
-            <select id="options" [(ngModel)]="selectedOption" (ngModelChange)="onOptionChange()" class="block appearance-none w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-400 dark:border-gray-600 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline transition-colors duration-500">
-              <option *ngFor="let option of options" [value]="option">{{ option }}</option>
-            </select>
+    </section>
+
+    <aside class="rounded bg-white p-4 shadow dark:bg-gray-800">
+      <div class="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-semibold">Script canvas</h2>
+          <p class="text-xs text-gray-500 dark:text-gray-400">{{ canvasBlocks().length }} block(s)</p>
+        </div>
+        <button type="button" (click)="clearCanvas()" [disabled]="!canvasBlocks().length" class="rounded px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-red-950">
+          Clear
+        </button>
+      </div>
+
+      <div class="mb-4 space-y-2">
+        <div *ngFor="let block of canvasBlocks(); let index = index" class="rounded border border-gray-200 p-3 dark:border-gray-700">
+          <div class="mb-2 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <span class="block truncate text-sm font-semibold">{{ index + 1 }}. {{ block.label }}</span>
+              <span class="block text-xs text-gray-500 dark:text-gray-400">{{ block.createdAt | date: 'shortTime' }}</span>
+            </div>
+            <button type="button" (click)="remove(block)" class="rounded px-2 py-1 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950">Remove</button>
           </div>
-
-          <div *ngIf="selectedOption && selectedOption !== 'Choose one'" class="mb-4">
-            <div *ngIf="selectedOption === 'Paragraph'">
-              <form [formGroup]="formParagraph" (ngSubmit)="submit()">
-            
-                <!-- Env -->
-                <label for="env" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
-                  Select Env:
-                </label>
-                <select id="env" class="common-input" formControlName="env">
-                  <option value="Staged">Staged</option>
-                  <option value="Online">Online</option>
-                </select>
-                <div *ngIf="form.get('env')?.touched && form.get('env')?.invalid" class="text-red-500 text-xs italic">
-                  Env is required.
-                </div>
-            
-                <!-- Content Catalog -->
-                <label for="contentCatalog" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">
-                  Enter Content Catalog:
-                </label>
-                <input id="contentCatalog" type="text" class="common-input" formControlName="contentCatalog" />
-                <div *ngIf="form.get('contentCatalog')?.touched && form.get('contentCatalog')?.invalid" class="text-red-500 text-xs italic">
-                  Content Catalog is required.
-                </div>
-            
-                <!-- Lang -->
-                <label for="lang" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">
-                  Enter Language:
-                </label>
-                <input id="lang" type="text" class="common-input" formControlName="lang" value="pt" />
-                <div *ngIf="form.get('lang')?.touched && form.get('lang')?.invalid" class="text-red-500 text-xs italic">
-                  Language is required.
-                </div>
-                
-                <hr class="my-4 border-gray-300 dark:border-gray-600" />
-
-                <button type="button" (click)="addParagraph()" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-2">
-                  Add New Paragraph
-                </button>
-
-                <!-- Paragraph Section -->
-                <div formArrayName="paragraphs">
-                  <div *ngFor="let paragraph of paragraphs.controls; let i = index" [formGroupName]="i" class="mb-4 relative">
-                    
-            
-
-                    <!-- Paragraph UID -->
-                    <label for="uid-{{i}}" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
-                      Paragraph UID {{i + 1}}:
-                    </label>
-                    <input id="uid-{{i}}" type="text" class="common-input" formControlName="uid" />
-                    <div *ngIf="paragraph.get('uid')?.touched && paragraph.get('uid')?.invalid" class="text-red-500 text-xs italic">
-                      UID is required.
-                    </div>
-
-                    <label for="name-{{i}}" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Paragraph Name {{i + 1}}:</label>
-                    <input id="name-{{i}}" type="text" class="common-input" formControlName="name" />
-                    <div *ngIf="paragraph.get('name')?.touched && paragraph.get('name')?.invalid" class="text-red-500 text-xs italic">Name is required.</div>
-            
-                    <!-- Paragraph Content -->
-                    <label for="content-{{i}}" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">
-                      Paragraph Content {{i + 1}}:
-                    </label>
-                    <textarea id="content-{{i}}" rows="4" class="common-input" formControlName="content"></textarea>
-                    <div *ngIf="paragraph.get('content')?.touched && paragraph.get('content')?.invalid" class="text-red-500 text-xs italic">
-                      Content is required.
-                    </div>
-            
-                   
-                  </div>
-                </div>
-            
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
-                  Generate
-                </button>
-            
-              </form>
-            </div>
-            
-            
-          
-            <div *ngIf="selectedOption === 'Feature Flag'">
-              <form [formGroup]="form" (ngSubmit)="submit()">
-                
-                <!-- Feature Flag key -->
-                <label for="featureFlagKey" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
-                  Enter Feature Flag key (newFeatureFlag):
-                </label>
-                <input id="featureFlagKey" type="text" class="common-input" formControlName="featureFlagKey" />
-                <div *ngIf="form.get('featureFlagKey')?.touched && form.get('featureFlagKey')?.invalid" class="text-red-500 text-xs italic">
-                  Feature Flag key is required.
-                </div>
-            
-                <!-- Feature Flag status -->
-                <label for="featureFlagStatus" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2 mt-2">Status?</label>
-                <select id="featureFlagStatus" class="common-input mb-4" formControlName="featureFlagStatus">
-                  <option value="true">True</option>
-                  <option value="false">False</option>
-                </select>
-                <div *ngIf="form.get('featureFlagStatus')?.touched && form.get('featureFlagStatus')?.invalid" class="text-red-500 text-xs italic">
-                  Status option is required.
-                </div>
-            
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">
-                  Generate
-                </button>
-              </form>
-            </div>
-            
-            
-          
-            <div *ngIf="selectedOption === 'Page'">
-              <!-- Formulário para Page -->
-              <label for="pageTitle" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Enter Page Title:</label>
-              <input id="pageTitle" type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"/>
-            </div>
-          
-            <div *ngIf="selectedOption === 'Product Images'">
-              <!-- Formulário para Product Images -->
-              <label for="productImages" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">Upload Product Images:</label>
-              <input id="productImages" type="file" multiple class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-400 leading-tight focus:outline-none focus:shadow-outline"/>
-            </div>
-          </div>
-
-      
-          <div class="mb-4">
-            <label for="textarea" class="block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2">
-              Output
-            </label>
-            <textarea id="textarea" rows="4" class="common-input" [value]="output" readonly></textarea>
-          </div>
-          <div class="mb-4">
-            <button (click)="copyToClipboard()" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-              {{ copyButtonText }}
-            </button>
+          <div class="flex gap-2">
+            <button type="button" (click)="move(block, -1)" [disabled]="index === 0" class="rounded border border-gray-300 px-2 py-1 text-xs disabled:opacity-40 dark:border-gray-600">Up</button>
+            <button type="button" (click)="move(block, 1)" [disabled]="index === canvasBlocks().length - 1" class="rounded border border-gray-300 px-2 py-1 text-xs disabled:opacity-40 dark:border-gray-600">Down</button>
           </div>
         </div>
       </div>
-    </div>
-    <div class="flex flex-col items-center justify-center py-12 dark:text-white">
-        Created by <a href="https://github.com/andreescocard">andreescocard</a>
-    </div>
-  </div>
-  
+
+      <label for="impex-output" class="mb-2 block text-sm font-bold text-gray-700 dark:text-gray-400">Output</label>
+      <textarea id="impex-output" rows="18" class="common-input font-mono text-xs" [value]="output()" readonly></textarea>
+
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <button (click)="copyToClipboard()" [disabled]="!output()" class="rounded bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-40">
+          {{ copyButtonText }}
+        </button>
+        <button (click)="download()" [disabled]="!output()" class="rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40">
+          Download
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+    Created by <a class="font-semibold underline" href="https://github.com/andreescocard">andreescocard</a>
+  </footer>
+</div>
