@@ -21,19 +21,38 @@ The **IMPEX Generator** is a tool that generates sample IMPEX scripts for **SAP 
 
 ## ✨ Features
 
-- 🚩 **Feature Flag** — generate feature flag IMPEX scripts
-- 📝 **Paragraph** — generate paragraph component scripts
-- 🧱 Clean, form-driven UI built with [Spartan-ng](https://www.spartan.ng/)
+Form-driven generators for the most common SAP Commerce IMPEX scripts:
+
+- 🚩 **Feature Flag**
+- 📝 **Paragraph**
+- 📄 **Page**
+- 🖼️ **Product Images**
+- 📦 **Product**
+- 🗂️ **Category**
+- 🔗 **CMS Link Component**
+- 🧩 **Content Slot**
+- 💲 **Price Row**
+
+Plus:
+
+- 💾 **Snippet library** — save and reuse your own configurations (localStorage)
+- 🧱 Clean UI built with [Spartan-ng](https://www.spartan.ng/) + Tailwind
 - ⚡ Powered by Angular + Analog inside an Nx monorepo
 
 ## 🗺️ Roadmap
 
-| Status | Item            |
-| :----: | --------------- |
-|   ✅   | Feature Flag    |
-|   ✅   | Paragraph       |
-|   ⬜   | Page            |
-|   ⬜   | Product Images  |
+| Status | Item                |
+| :----: | ------------------- |
+|   ✅   | Feature Flag        |
+|   ✅   | Paragraph           |
+|   ✅   | Page                |
+|   ✅   | Product Images      |
+|   ✅   | Product             |
+|   ✅   | Category            |
+|   ✅   | CMS Link Component  |
+|   ✅   | Content Slot        |
+|   ✅   | Price Row           |
+|   ⬜   | More component types |
 
 ## 🚀 Getting Started
 
