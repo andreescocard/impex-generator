@@ -15,8 +15,9 @@ import { languageOptions } from '../../impex/types/shared';
           <div *ngSwitchCase="'group'" class="border-t border-gray-200 pt-4 dark:border-gray-700">
             <div class="mb-3 flex items-center justify-between gap-3">
               <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ field.label }}</h3>
-              <button type="button" (click)="addGroupItem(field)" class="rounded bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700">
-                Add
+              <button type="button" (click)="addGroupItem(field)" class="inline-flex items-center gap-2 rounded bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                <span aria-hidden="true">+</span>
+                {{ labels.add }}
               </button>
             </div>
 
@@ -24,8 +25,9 @@ import { languageOptions } from '../../impex/types/shared';
               <div *ngFor="let group of groupArray(field.id).controls; let index = index" [formGroupName]="index" class="rounded border border-gray-200 p-4 dark:border-gray-700">
                 <div class="mb-3 flex items-center justify-between">
                   <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ field.label }} {{ index + 1 }}</span>
-                  <button type="button" (click)="removeGroupItem(field.id, index)" [disabled]="groupArray(field.id).length === 1" class="rounded px-3 py-1 text-sm text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-red-950">
-                    Remove
+                  <button type="button" (click)="removeGroupItem(field.id, index)" [disabled]="groupArray(field.id).length === 1" class="inline-flex items-center gap-2 rounded border border-red-200 bg-red-50 px-3 py-1 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900 dark:bg-red-950 dark:text-red-200 dark:hover:bg-red-900">
+                    <span aria-hidden="true">x</span>
+                    {{ labels.remove }}
                   </button>
                 </div>
                 <ng-container *ngFor="let child of field.fields">
@@ -41,8 +43,9 @@ import { languageOptions } from '../../impex/types/shared';
         </ng-container>
       </ng-container>
 
-      <button type="submit" class="w-full rounded bg-blue-600 px-4 py-2 font-bold text-white transition-colors hover:bg-blue-700">
-        Add to script
+      <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded bg-blue-600 px-4 py-2 font-bold text-white transition-colors hover:bg-blue-700">
+        <span aria-hidden="true">+</span>
+        {{ labels.addToScript }}
       </button>
     </form>
 
@@ -62,7 +65,7 @@ import { languageOptions } from '../../impex/types/shared';
 
         <label *ngIf="field.kind === 'boolean'" class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" [formControlName]="field.id" />
-          Enabled
+          {{ labels.enabled }}
         </label>
 
         <input
@@ -75,7 +78,7 @@ import { languageOptions } from '../../impex/types/shared';
         />
 
         <div *ngIf="parent.get(field.id)?.touched && parent.get(field.id)?.invalid" class="mt-1 text-xs italic text-red-500">
-          {{ field.label }} is required.
+          {{ field.label }} {{ labels.required }}
         </div>
       </div>
     </ng-template>
@@ -84,6 +87,13 @@ import { languageOptions } from '../../impex/types/shared';
 export class DynamicFormComponent implements OnChanges {
   @Input({ required: true }) fields: ImpexField[] = [];
   @Input() initialValues: Record<string, ImpexValue> | null = null;
+  @Input() labels = {
+    add: 'Add',
+    remove: 'Remove',
+    addToScript: 'Add to script',
+    enabled: 'Enabled',
+    required: 'is required.',
+  };
   @Output() submitted = new EventEmitter<Record<string, ImpexValue>>();
 
   readonly languageOptions = languageOptions;
